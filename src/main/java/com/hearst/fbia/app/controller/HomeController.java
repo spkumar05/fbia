@@ -8,9 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class HomeController {
@@ -44,6 +46,14 @@ public class HomeController {
 		model.addAttribute("redirect_uri", redirect_uri);
 		model.addAttribute("account_linking_token", account_linking_token);
 		return "home";
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "getSubscriptionPayload/{edbid}", method = RequestMethod.GET)
+	public String getSubscriptionPayload(@PathVariable String edbid) {
+		logger.info("edbid {}", edbid);
+		// Call MG2 Soap service here
+		return "Success";
 	}
 
 }

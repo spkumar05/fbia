@@ -43,15 +43,17 @@
 	<script type="text/javascript">
 		var redirectUri = '${redirect_uri}';
 		var accountLinkingToken = '${account_linking_token}';
-
+		var edbid = "112861";
 		$('#loginBtn').click(
 				function() {
 					var emailAddress = $('#emailAddress').val();
 					var password = $('#password').val();
 					if (emailAddress === password) {
+
 						var redirectUrl = redirectUri
 								+ "&account_linking_token="
 								+ accountLinkingToken
+								+ "&subscription_payload={sample_payload}";
 
 						$(location).attr('href', redirectUrl);
 					} else {
