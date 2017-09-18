@@ -16,11 +16,11 @@ public class BaseEntity {
 	@Column(name = "UPDATED_DATE")
 	private Date updatedDate;
 	@JsonIgnore
-	@Column(name = "CREATED_BY")
-	private Long createdBy;
+	@Column(name = "CREATED_BY", length = 100)
+	private String createdBy;
 	@JsonIgnore
-	@Column(name = "UPDATED_BY")
-	private Long updatedBy;
+	@Column(name = "UPDATED_BY", length = 100)
+	private String updatedBy;
 
 	public Date getCreatedDate() {
 		return createdDate;
@@ -38,19 +38,19 @@ public class BaseEntity {
 		this.updatedDate = updatedDate;
 	}
 
-	public Long getCreatedBy() {
+	public String getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(Long createdBy) {
+	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public Long getUpdatedBy() {
+	public String getUpdatedBy() {
 		return updatedBy;
 	}
 
-	public void setUpdatedBy(Long updatedBy) {
+	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
 	}
 
