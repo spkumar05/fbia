@@ -69,7 +69,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 			String soapResponseString = getStringFromSoapMessage(soapResponse);
 			logger.info("Soap Response : {}", soapResponseString);
 
-			subscriptionPayload = processSoapResponse(soapResponseString, accountLinkingToken);
+			subscriptionPayload = processSoapResponse(soapResponseString, accountLinkingToken, edbid);
 			soapConnection.close();
 			meta = new Meta();
 		} catch (Exception e) {
@@ -82,7 +82,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 	}
 
-	private String processSoapResponse(String soapResponse, String accountLinkingToken)
+	private String processSoapResponse(String soapResponse, String accountLinkingToken, String edbid)
 			throws ParseException, NoSuchAlgorithmException, InvalidKeyException {
 
 		String subscriptionPayload = null;
@@ -97,6 +97,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 			Long accountId = getSubscriptionsByMasterIdResult.getJSONObject("Subscriptions")
 					.getJSONObject("Subscription").getLong("AccountId");
+
+			Long subscriptionLevelHousehold = getSubscriptionsByMasterIdResult.getJSONObject("Subscriptions")
+					.getJSONObject("Subscription").getLong("SubscriptionLevelHousehold");
 
 			String expirationDate = getSubscriptionsByMasterIdResult.getJSONObject("Subscriptions")
 					.getJSONObject("Subscription").getString("ExpirationDate");
@@ -113,9 +116,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 			JSONArray accountLinkingJson = new JSONArray();
 			accountLinkingJson.put(accountLinkingToken); // Account Linking Token
-			accountLinkingJson.put(1); // Subscription Status - 1/0
+			accountLinkingJson.put(subscriptionLevelHousehold); // Subscription Status - 1/0
 			accountLinkingJson.put(isoDate); // Expiry Time
-			accountLinkingJson.put(accountId); // Publisher User ID
+			accountLinkingJson.put(edbid); // Publisher User ID
 			accountLinkingJson.put(facebookUserId); // Facebook User ID
 
 			String accountLinking = accountLinkingJson.toString();

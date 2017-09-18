@@ -42,8 +42,38 @@
 		<!-- XML Response -->
 		<woodstox-core-asl-version>4.4.1</woodstox-core-asl-version>
 
+		<!-- Spring Data JPA -->
+		<spring-data-jpa>1.11.7.RELEASE</spring-data-jpa>
+
+		<!-- Hibernate -->
+		<org.hibernate-version>5.2.11.Final</org.hibernate-version>
+
+		<!-- MySQL -->
+		<mysql-version>6.0.6</mysql-version>
+
 	</properties>
 	<dependencies>
+		<!-- Spring Data JPA -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>${spring-data-jpa}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${org.hibernate-version}</version>
+		</dependency>
+		<!-- Spring Data JPA -->
+
+		<!-- MySQL -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql-version}</version>
+		</dependency>
+		<!-- MySQL -->
+
 		<!-- XML Response -->
 		<dependency>
 			<groupId>org.codehaus.woodstox</groupId>
