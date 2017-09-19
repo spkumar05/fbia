@@ -53,6 +53,13 @@
 
 	</properties>
 	<dependencies>
+
+		<dependency>
+			<groupId>com.google.cloud.sql</groupId>
+			<artifactId>mysql-socket-factory</artifactId>
+			<version>1.0.4</version>
+		</dependency>
+
 		<!-- Spring Data JPA -->
 		<dependency>
 			<groupId>org.springframework.data</groupId>
@@ -71,7 +78,6 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql-version}</version>
-			<scope>runtime</scope>
 		</dependency>
 		<!-- MySQL -->
 
