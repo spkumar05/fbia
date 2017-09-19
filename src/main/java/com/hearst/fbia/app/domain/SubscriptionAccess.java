@@ -8,41 +8,41 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "SUBSCRIPTION_ACCESS")
+@Table(name = "subscription_access")
 public class SubscriptionAccess extends BaseEntity {
 
 	@Id
-	@Column(name = "SUBSCRIPTION_TRACKING_TOKEN", unique = true, nullable = false, length = 100)
+	@Column(name = "subscription_tracking_token", unique = true, nullable = false, length = 100)
 	private String subscriptionTrackingToken;
 
-	@Column(name = "FB_REDIRECT_URI", nullable = false, length = 300)
+	@Column(name = "fb_redirect_uri", nullable = false, length = 300)
 	private String fbRedirectURI;
 
-	@Column(name = "FB_LINKING_TOKEN", length = 100)
+	@Column(name = "fb_linking_token", length = 100)
 	private String fbLinkingToken;
 
-	@Column(name = "SUBSCRIBE_MARKET", length = 50)
+	@Column(name = "subscribe_market", length = 50)
 	private String subscribeMarket;
 
-	@Column(name = "SUBSCRIBER_ID", length = 100)
+	@Column(name = "subscriber_id", length = 100)
 	private String subscriberId;
 
-	@Column(name = "SUBSCRIPTION_STATUS", length = 200)
+	@Column(name = "subscription_status", length = 200)
 	private String subscriptionStatus;
 
-	@Column(name = "ACCOUNT_ID", length = 100)
+	@Column(name = "account_id", length = 100)
 	private String accountId;
 
-	@Column(name = "SUBSCRIPTION_EXPIRY_DATE")
+	@Column(name = "subscription_expiry_date")
 	private Date subscriptionExpiryDate;
 
-	@Column(name = "EXPIRE_DATE_BATCH_UPD")
+	@Column(name = "expire_date_batch_upd")
 	private Date expireDateBatchUpd;
 
-	@Column(name = "BATCH_UPDATED_DATE")
+	@Column(name = "batch_updated_date")
 	private Date batchUpdatedDate;
 
-	@Column(name = "UPDATED_BY", length = 30)
+	@Column(name = "batch_updated_by", length = 30)
 	private String batchUpdatedBy;
 
 	public String getSubscriptionTrackingToken() {

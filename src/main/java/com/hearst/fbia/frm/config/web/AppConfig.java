@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
@@ -41,6 +42,13 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 				.useJaf(false).defaultContentType(MediaType.APPLICATION_JSON)
 				.mediaType("xml", MediaType.APPLICATION_XML).mediaType("json", MediaType.APPLICATION_JSON)
 				.mediaType("html", MediaType.TEXT_HTML).mediaType("pdf", MediaType.APPLICATION_PDF);
+	}
+
+	@Override
+	public void addViewControllers(ViewControllerRegistry registry) {
+		super.addViewControllers(registry);
+		registry.addViewController("terms_of_use").setViewName("termsofuse");
+		registry.addViewController("privacy_policy").setViewName("privacypolicy");
 	}
 
 }

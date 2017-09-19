@@ -61,7 +61,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
+			<artifactId>hibernate-entitymanager</artifactId>
 			<version>${org.hibernate-version}</version>
 		</dependency>
 		<!-- Spring Data JPA -->
@@ -71,6 +71,7 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql-version}</version>
+			<scope>runtime</scope>
 		</dependency>
 		<!-- MySQL -->
 

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hearst.fbia.app.model.Response;
+import com.hearst.fbia.app.repository.SubscriptionAccessRespository;
 import com.hearst.fbia.app.service.SubscriptionService;
 
 @Controller
@@ -26,6 +27,9 @@ public class HomeController {
 	@Autowired
 	SubscriptionService subscriptionService;
 
+	@Autowired
+	SubscriptionAccessRespository subscriptionAccessRespository;
+
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model) {
 		logger.info("Welcome home! The client locale is {}.", locale);
@@ -35,6 +39,16 @@ public class HomeController {
 		model.addAttribute("serverTime", formattedDate);
 		return "home";
 	}
+
+	/*
+	 * @RequestMapping(value = "terms_of_use", method = RequestMethod.GET) public
+	 * String termsOfUse(Model model) { logger.info("Terms of use page"); return
+	 * "termsofuse"; }
+	 * 
+	 * @RequestMapping(value = "privacy_policy", method = RequestMethod.GET) public
+	 * String privacyPolicy(Locale locale, Model model) {
+	 * logger.info("Privacy policy page"); return "privacypolicy"; }
+	 */
 
 	@RequestMapping(value = "login", method = RequestMethod.GET)
 	public String login(@RequestParam String redirect_uri, @RequestParam String account_linking_token, Model model) {
@@ -61,6 +75,12 @@ public class HomeController {
 		logger.info("edbid {}", edbid);
 		logger.info("account_linking_token {}", accountLinkingToken);
 		return subscriptionService.getSubscriptionPayload(edbid, accountLinkingToken);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "test", method = RequestMethod.GET)
+	public long test() {
+		return subscriptionAccessRespository.count();
 	}
 
 }

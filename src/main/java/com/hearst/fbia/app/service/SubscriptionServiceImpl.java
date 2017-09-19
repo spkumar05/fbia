@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -32,11 +33,14 @@ import org.json.JSONObject;
 import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.hearst.fbia.app.domain.SubscriptionAccess;
 import com.hearst.fbia.app.model.Meta;
 import com.hearst.fbia.app.model.Response;
+import com.hearst.fbia.app.repository.SubscriptionAccessRespository;
 
 @Service
 public class SubscriptionServiceImpl implements SubscriptionService {
@@ -55,6 +59,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	@Value("${facebook.app.secret}")
 	private String appSecret;
 
+	@Value("${subscriptionAccess.subscribeMarket}")
+	private String subscribeMarket;
+
+	@Autowired
+	SubscriptionAccessRespository subscriptionAccessRespository;
+
 	@Override
 	public Response getSubscriptionPayload(String edbid, String accountLinkingToken) {
 
@@ -69,7 +79,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 			String soapResponseString = getStringFromSoapMessage(soapResponse);
 			logger.info("Soap Response : {}", soapResponseString);
 
-			subscriptionPayload = processSoapResponse(soapResponseString, accountLinkingToken, edbid);
+			subscriptionPayload = processSoapResponse(soapResponseString, accountLinkingToken, accountLinkingToken,
+					edbid);
 			soapConnection.close();
 			meta = new Meta();
 		} catch (Exception e) {
@@ -82,8 +93,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 	}
 
-	private String processSoapResponse(String soapResponse, String accountLinkingToken, String edbid)
-			throws ParseException, NoSuchAlgorithmException, InvalidKeyException {
+	private String processSoapResponse(String soapResponse, String redirectUri, String accountLinkingToken,
+			String edbid) throws ParseException, NoSuchAlgorithmException, InvalidKeyException {
 
 		String subscriptionPayload = null;
 
@@ -135,6 +146,18 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 			logger.info("payloadSignature : {}", payloadSignature);
 
 			subscriptionPayload = payload + "." + payloadSignature;
+
+			SubscriptionAccess subscriptionAccess = new SubscriptionAccess();
+			subscriptionAccess.setSubscriptionTrackingToken(UUID.randomUUID().toString());
+			subscriptionAccess.setFbRedirectURI(redirectUri);
+			subscriptionAccess.setFbLinkingToken(accountLinkingToken);
+			subscriptionAccess.setSubscribeMarket(subscribeMarket);
+			subscriptionAccess.setSubscriberId(edbid);
+			subscriptionAccess.setSubscriptionStatus(subscriptionLevelHousehold.toString());
+			subscriptionAccess.setAccountId(accountId.toString());
+			subscriptionAccess.setSubscriptionExpiryDate(date);
+
+			subscriptionAccessRespository.save(subscriptionAccess);
 
 			logger.info("subscriptionPayload : {}", subscriptionPayload);
 		}
