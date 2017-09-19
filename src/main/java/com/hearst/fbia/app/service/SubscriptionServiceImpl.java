@@ -36,11 +36,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.hearst.fbia.app.domain.SubscriptionAccess;
 import com.hearst.fbia.app.model.Meta;
 import com.hearst.fbia.app.model.Response;
-import com.hearst.fbia.app.repository.SubscriptionAccessRespository;
+import com.hearst.fbia.frm.service.dao.AdminDao;
 
 @Service
 public class SubscriptionServiceImpl implements SubscriptionService {
@@ -63,8 +64,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	private String subscribeMarket;
 
 	@Autowired
-	SubscriptionAccessRespository subscriptionAccessRespository;
+	AdminDao adminDao;
 
+	@Override
+	public AdminDao getAdminDao() {
+		return adminDao;
+	}
+
+	@Transactional
 	@Override
 	public Response getSubscriptionPayload(String edbid, String accountLinkingToken) {
 
@@ -157,7 +164,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 			subscriptionAccess.setAccountId(accountId.toString());
 			subscriptionAccess.setSubscriptionExpiryDate(date);
 
-			subscriptionAccessRespository.save(subscriptionAccess);
+			adminDao.save(subscriptionAccess);
 
 			logger.info("subscriptionPayload : {}", subscriptionPayload);
 		}

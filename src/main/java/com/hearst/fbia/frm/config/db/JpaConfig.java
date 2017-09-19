@@ -1,4 +1,4 @@
-package com.hearst.fbia.frm.config.db;
+/*package com.hearst.fbia.frm.config.db;
 
 import java.util.Properties;
 
@@ -88,4 +88,4 @@ public class JpaConfig {
 			}
 		};
 	}
-}
+}*/
