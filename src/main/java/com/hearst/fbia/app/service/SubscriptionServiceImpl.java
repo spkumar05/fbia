@@ -73,12 +73,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 	@Transactional
 	@Override
-	public Response getSubscriptionPayload(String edbid, String accountLinkingToken) {
-
+	public Response getSubscriptionPayload(String subscription) {
+		JSONObject jsonObject = new JSONObject(subscription);
 		Meta meta = null;
 		String subscriptionPayload = null;
 		try {
-			SOAPMessage soapRequest = constuctSoapRequest(edbid);
+			SOAPMessage soapRequest = constuctSoapRequest(jsonObject.getString("edbid"));
 			SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 			SOAPConnection soapConnection = soapConnectionFactory.createConnection();
 			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
@@ -86,8 +86,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 			String soapResponseString = getStringFromSoapMessage(soapResponse);
 			logger.info("Soap Response : {}", soapResponseString);
 
-			subscriptionPayload = processSoapResponse(soapResponseString, accountLinkingToken, accountLinkingToken,
-					edbid);
+			subscriptionPayload = processSoapResponse(soapResponseString, jsonObject.getString("redirectUri"),
+					jsonObject.getString("accountLinkingToken"), jsonObject.getString("edbid"));
 			soapConnection.close();
 			meta = new Meta();
 		} catch (Exception e) {
@@ -95,9 +95,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 			meta = new Meta(500, ExceptionUtils.getMessage(e).split(":")[0], ExceptionUtils.getMessage(e));
 		}
 		Response response = new Response(subscriptionPayload, meta);
-
 		return response;
-
 	}
 
 	private String processSoapResponse(String soapResponse, String redirectUri, String accountLinkingToken,

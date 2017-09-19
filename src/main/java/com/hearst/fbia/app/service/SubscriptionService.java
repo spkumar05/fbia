@@ -5,7 +5,7 @@ import com.hearst.fbia.frm.service.dao.AdminDao;
 
 public interface SubscriptionService {
 
-	Response getSubscriptionPayload(String edbid, String accountLinkingToken);
+	Response getSubscriptionPayload(String subscription);
 
 	AdminDao getAdminDao();
 

@@ -24,10 +24,20 @@
 			console.log("Active session - " + treg.hasActiveSession());
 			if (treg.hasActiveSession()) {
 				var edbid = JSON.parse(treg.readCookie('hrstptok')).id;
-				var url = "getSubscriptionPayload/" + edbid + "/"
-						+ accountLinkingToken;
-				serviceWrapper.get(url, "", successGetSubscriptionPayload,
-						failureGetSubscriptionPayload);
+				//var url = "getSubscriptionPayload/" + edbid + "/"
+				//		+ accountLinkingToken;
+				//serviceWrapper.get(url, "", successGetSubscriptionPayload,
+				//		failureGetSubscriptionPayload);
+				var subscriptionObj = {
+					"edbid" : edbid,
+					"redirectUri" : redirectUri,
+					"accountLinkingToken" : accountLinkingToken
+				};
+				serviceWrapper
+						.post("getSubscriptionPayload", {
+							subscription : JSON.stringify(subscriptionObj)
+						}, successGetSubscriptionPayload,
+								failureGetSubscriptionPayload);
 			}
 		}
 
@@ -45,6 +55,23 @@
 					}
 				});
 			};
+			this.post = function(url, args, Onsuccess, Onfailure) {
+				loading.show();
+				$.ajax({
+					url : url,
+					type : 'POST',
+					data : args,
+					datatype : "json",
+					success : function(response) {
+						Onsuccess(response);
+						loading.hide();
+					},
+					error : function(response, ajaxOptions, thrownError) {
+						Onfailure(response);
+						loading.hide();
+					}
+				});
+			};
 		}
 		function successGetSubscriptionPayload(response) {
 			console.log("successGetSubscriptionPayload");
@@ -54,14 +81,14 @@
 						+ response.data;
 				$(location).attr('href', redirectUrl);
 			} else {
-				console.log("Error getting subscription payload - "
+				alert("Error getting subscription payload - "
 						+ response.status.message);
 			}
 		}
 
 		function failureGetSubscriptionPayload(response) {
 			console.log("failureGetSubscriptionPayload");
-			console.log("Error getting subscription payload - "
+			alert("Error getting subscription payload - "
 					+ response.status.message);
 		}
 		var serviceWrapper = new ServiceWrapper();

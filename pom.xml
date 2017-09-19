@@ -53,8 +53,28 @@
 		<!-- MySQL -->
 		<mysql-version>5.1.44</mysql-version>
 
+		<!-- Swagger -->
+		<io.springfox-version>2.6.1</io.springfox-version>
 	</properties>
 	<dependencies>
+
+		<!-- Swagger -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>${io.springfox-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>${io.springfox-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>bootstrap</artifactId>
+			<version>3.3.7</version>
+		</dependency>
+		<!-- Swagger -->
 
 		<dependency>
 			<groupId>com.google.cloud.sql</groupId>
