@@ -6,8 +6,8 @@
 <script type="text/javascript">
 	var treg = treg || {};
 </script>
-<!-- <script type="text/javascript" src="//treg-staging.hearstnp.com/treg.js"></script> -->
-<script type="text/javascript" src="resources/app/js/treg.js"></script>
+<script type="text/javascript" src="//treg-staging.hearstnp.com/treg.js"></script>
+<!-- <script type="text/javascript" src="resources/app/js/treg.js"></script> -->
 </head>
 <body>
 	<div class="treg-gya-login-widget"></div>

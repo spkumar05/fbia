@@ -106,8 +106,9 @@ a[e[0]]=e[1]
 }treg.readCookie=b
 })();
 treg.loadSystem=function(){treg.readConfigFromCookies();
-//var e=treg.getPageUrl();
-var e = "treg-hou-staging.hearstnp.com";
+var e=treg.getPageUrl();
+//var e= "identity.houstonchronicle.com";
+//var e = "treg-hou-staging.hearstnp.com";
 if(treg.readCookie("gigyaServiceAvailable")=="false"){treg.gigyaServiceAvailable=false
 }var a=treg.server_location+"assets/"+treg.current_hash+"/GetJS?url="+escape(e);
 var d=treg.getFullExpandedAddress(a);
