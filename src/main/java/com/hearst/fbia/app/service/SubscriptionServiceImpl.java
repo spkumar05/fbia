@@ -34,7 +34,7 @@ import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,20 +48,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 	private static final Logger logger = LoggerFactory.getLogger(SubscriptionServiceImpl.class);
 
-	@Value("${soap.request.sourceSystem}")
-	private String sourceSystem;
-
-	@Value("${soap.request.authenticationToken}")
-	private String authenticationToken;
-
-	@Value("${soap.request.url}")
-	private String endpoint;
-
-	@Value("${facebook.app.secret}")
-	private String appSecret;
-
-	@Value("${subscriptionAccess.subscribeMarket}")
-	private String subscribeMarket;
+	@Autowired
+	Environment environment;
 
 	@Autowired
 	AdminDao adminDao;
@@ -81,7 +69,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 			SOAPMessage soapRequest = constuctSoapRequest(jsonObject.getString("edbid"));
 			SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 			SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
+			SOAPMessage soapResponse = soapConnection.call(soapRequest,
+					environment.getRequiredProperty("soap.request.url"));
 
 			String soapResponseString = getStringFromSoapMessage(soapResponse);
 			logger.info("Soap Response : {}", soapResponseString);
@@ -144,7 +133,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 			logger.info("payload : {}", payload);
 
 			Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
-			SecretKeySpec secret_key = new SecretKeySpec(appSecret.getBytes(), "HmacSHA256");
+			SecretKeySpec secret_key = new SecretKeySpec(
+					environment.getRequiredProperty("facebook.app.secret").getBytes(), "HmacSHA256");
 			sha256_HMAC.init(secret_key);
 
 			String payloadSignature = Base64.encodeBase64String(sha256_HMAC.doFinal(payload.getBytes()));
@@ -156,7 +146,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 			subscriptionAccess.setSubscriptionTrackingToken(UUID.randomUUID().toString());
 			subscriptionAccess.setFbRedirectURI(redirectUri);
 			subscriptionAccess.setFbLinkingToken(accountLinkingToken);
-			subscriptionAccess.setSubscribeMarket(subscribeMarket);
+			subscriptionAccess
+					.setSubscribeMarket(environment.getRequiredProperty("subscriptionAccess.subscribeMarket"));
 			subscriptionAccess.setSubscriberId(edbid);
 			subscriptionAccess.setSubscriptionStatus(subscriptionLevelHousehold.toString());
 			subscriptionAccess.setAccountId(accountId.toString());
@@ -201,11 +192,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 		Name authenticationTokenName = soapFactory.createName("AuthenticationToken", "tem", "http://tempuri.org/");
 		SOAPElement authenticationTokenElement = getSubscriptionsByMasterIdElement
 				.addChildElement(authenticationTokenName);
-		authenticationTokenElement.addTextNode(authenticationToken);
+		authenticationTokenElement.addTextNode(environment.getRequiredProperty("soap.request.authenticationToken"));
 
 		Name sourceSystemName = soapFactory.createName("SourceSystem", "tem", "http://tempuri.org/");
 		SOAPElement sourceSystemElement = getSubscriptionsByMasterIdElement.addChildElement(sourceSystemName);
-		sourceSystemElement.addTextNode(sourceSystem);
+		sourceSystemElement.addTextNode(environment.getRequiredProperty("soap.request.sourceSystem"));
 
 		String soapRequestString = getStringFromSoapMessage(soapMessage);
 		logger.info("Soap Request : {}", soapRequestString);

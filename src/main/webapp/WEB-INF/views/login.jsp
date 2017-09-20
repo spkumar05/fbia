@@ -33,6 +33,7 @@
 					"redirectUri" : redirectUri,
 					"accountLinkingToken" : accountLinkingToken
 				};
+				console.log(JSON.stringify(subscriptionObj));
 				serviceWrapper
 						.post("getSubscriptionPayload", {
 							subscription : JSON.stringify(subscriptionObj)

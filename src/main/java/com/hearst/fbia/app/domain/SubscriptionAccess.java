@@ -15,10 +15,10 @@ public class SubscriptionAccess extends BaseEntity {
 	@Column(name = "subscription_tracking_token", unique = true, nullable = false, length = 100)
 	private String subscriptionTrackingToken;
 
-	@Column(name = "fb_redirect_uri", nullable = false, length = 300)
+	@Column(name = "fb_redirect_uri", nullable = false, length = 1024)
 	private String fbRedirectURI;
 
-	@Column(name = "fb_linking_token", length = 100)
+	@Column(name = "fb_linking_token", length = 1024)
 	private String fbLinkingToken;
 
 	@Column(name = "subscribe_market", length = 50)
