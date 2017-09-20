@@ -56,7 +56,6 @@
 				});
 			};
 			this.post = function(url, args, Onsuccess, Onfailure) {
-				loading.show();
 				$.ajax({
 					url : url,
 					type : 'POST',
@@ -64,11 +63,9 @@
 					datatype : "json",
 					success : function(response) {
 						Onsuccess(response);
-						loading.hide();
 					},
 					error : function(response, ajaxOptions, thrownError) {
 						Onfailure(response);
-						loading.hide();
 					}
 				});
 			};
