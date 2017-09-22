@@ -63,7 +63,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	@Override
 	public String saveRequestInfo(String account_linking_token, String redirect_uri, String accessType) {
 		SubscriptionAccess subscriptionAccess = adminDao.uniqueResult(
-				"from SubscriptionAccess where fbLinkingToken = ?", SubscriptionAccess.class, account_linking_token);
+				"from SubscriptionAccess where fbLinkingToken = ? and accessType = ?", SubscriptionAccess.class,
+				account_linking_token, accessType);
 
 		if (null == subscriptionAccess) {
 			subscriptionAccess = new SubscriptionAccess();
@@ -145,7 +146,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 			JSONArray accountLinkingJson = new JSONArray();
 			accountLinkingJson.put(accountLinkingToken); // Account Linking Token
-			accountLinkingJson.put(subscriptionLevelHousehold); // Subscription Status - 1/0
+			accountLinkingJson.put(subscriptionLevelHousehold == 1 ? 1 : 0); // Subscription Status - 1/0
 			accountLinkingJson.put(isoDate); // Expiry Time
 			accountLinkingJson.put(edbid); // Publisher User ID
 			accountLinkingJson.put(facebookUserId); // Facebook User ID
@@ -167,7 +168,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 			subscriptionPayload = payload + "." + payloadSignature;
 
 			SubscriptionAccess subscriptionAccess = adminDao.uniqueResult(
-					"from SubscriptionAccess where subscriptionTrackingToken = ?", SubscriptionAccess.class, "");
+					"from SubscriptionAccess where subscriptionTrackingToken = ?", SubscriptionAccess.class,
+					subscriptionTrackingToken);
 
 			if (null == subscriptionAccess) {
 				subscriptionAccess = new SubscriptionAccess();

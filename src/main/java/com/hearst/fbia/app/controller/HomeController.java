@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,9 @@ public class HomeController {
 
 	@Autowired
 	SubscriptionService subscriptionService;
+
+	@Autowired
+	Environment environment;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home() {
@@ -52,7 +56,8 @@ public class HomeController {
 		model.addAttribute("subscriptionTrackingToken", subscriptionTrackingToken);
 		model.addAttribute("redirect_uri", redirect_uri);
 		model.addAttribute("account_linking_token", account_linking_token);
-		return "home";
+		model.addAttribute("subscribeRedirectUrl", environment.getRequiredProperty("subscribe.redirect.url"));
+		return "subscribe";
 	}
 
 	@ResponseBody

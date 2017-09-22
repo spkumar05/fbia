@@ -43,7 +43,7 @@
 			if (response.status.code == 200) {
 				var redirectUrl = redirectUri + "&account_linking_token="
 						+ accountLinkingToken + "&subscription_payload="
-						+ response.data;
+						+ encodeURIComponent(response.data);
 				$(location).attr('href', redirectUrl);
 			} else {
 				alert("Error getting subscription payload - "
