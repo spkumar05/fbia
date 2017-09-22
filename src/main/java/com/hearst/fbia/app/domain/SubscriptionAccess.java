@@ -45,6 +45,9 @@ public class SubscriptionAccess extends BaseEntity {
 	@Column(name = "batch_updated_by", length = 30)
 	private String batchUpdatedBy;
 
+	@Column(name = "access_type", length = 30)
+	private String accessType;
+
 	public String getSubscriptionTrackingToken() {
 		return subscriptionTrackingToken;
 	}
@@ -131,6 +134,14 @@ public class SubscriptionAccess extends BaseEntity {
 
 	public void setBatchUpdatedBy(String batchUpdatedBy) {
 		this.batchUpdatedBy = batchUpdatedBy;
+	}
+
+	public String getAccessType() {
+		return accessType;
+	}
+
+	public void setAccessType(String accessType) {
+		this.accessType = accessType;
 	}
 
 }

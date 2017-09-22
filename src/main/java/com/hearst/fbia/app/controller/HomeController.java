@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hearst.fbia.app.domain.SubscriptionAccess;
 import com.hearst.fbia.app.model.Response;
+import com.hearst.fbia.app.service.SubscriptionConstants;
 import com.hearst.fbia.app.service.SubscriptionService;
 
 @Controller
@@ -33,6 +34,9 @@ public class HomeController {
 	public String login(@RequestParam String redirect_uri, @RequestParam String account_linking_token, Model model) {
 		logger.info("redirect_uri {}", redirect_uri);
 		logger.info("account_linking_token {}", account_linking_token);
+		String subscriptionTrackingToken = subscriptionService.saveRequestInfo(account_linking_token, redirect_uri,
+				SubscriptionConstants.LOGIN.toString());
+		model.addAttribute("subscriptionTrackingToken", subscriptionTrackingToken);
 		model.addAttribute("redirect_uri", redirect_uri);
 		model.addAttribute("account_linking_token", account_linking_token);
 		return "login";
@@ -43,6 +47,9 @@ public class HomeController {
 			Model model) {
 		logger.info("redirect_uri {}", redirect_uri);
 		logger.info("account_linking_token {}", account_linking_token);
+		String subscriptionTrackingToken = subscriptionService.saveRequestInfo(account_linking_token, redirect_uri,
+				SubscriptionConstants.SUBSCRIBE.toString());
+		model.addAttribute("subscriptionTrackingToken", subscriptionTrackingToken);
 		model.addAttribute("redirect_uri", redirect_uri);
 		model.addAttribute("account_linking_token", account_linking_token);
 		return "home";

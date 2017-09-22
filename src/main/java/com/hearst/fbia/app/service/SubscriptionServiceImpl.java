@@ -61,6 +61,28 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 	@Transactional
 	@Override
+	public String saveRequestInfo(String account_linking_token, String redirect_uri, String accessType) {
+		SubscriptionAccess subscriptionAccess = adminDao.uniqueResult(
+				"from SubscriptionAccess where fbLinkingToken = ?", SubscriptionAccess.class, account_linking_token);
+
+		if (null == subscriptionAccess) {
+			subscriptionAccess = new SubscriptionAccess();
+			subscriptionAccess.setSubscriptionTrackingToken(UUID.randomUUID().toString());
+			subscriptionAccess.setAccessType(accessType);
+			subscriptionAccess
+					.setSubscribeMarket(environment.getRequiredProperty("subscriptionAccess.subscribeMarket"));
+		}
+
+		subscriptionAccess.setFbRedirectURI(redirect_uri);
+		subscriptionAccess.setFbLinkingToken(account_linking_token);
+
+		adminDao.save(subscriptionAccess);
+
+		return subscriptionAccess.getSubscriptionTrackingToken();
+	}
+
+	@Transactional
+	@Override
 	public Response getSubscriptionPayload(String subscription) {
 		JSONObject jsonObject = new JSONObject(subscription);
 		Meta meta = null;
@@ -76,7 +98,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 			logger.info("Soap Response : {}", soapResponseString);
 
 			subscriptionPayload = processSoapResponse(soapResponseString, jsonObject.getString("redirectUri"),
-					jsonObject.getString("accountLinkingToken"), jsonObject.getString("edbid"));
+					jsonObject.getString("accountLinkingToken"), jsonObject.getString("edbid"),
+					jsonObject.getString("subscriptionTrackingToken"));
 			soapConnection.close();
 			meta = new Meta();
 		} catch (Exception e) {
@@ -88,7 +111,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	}
 
 	private String processSoapResponse(String soapResponse, String redirectUri, String accountLinkingToken,
-			String edbid) throws ParseException, NoSuchAlgorithmException, InvalidKeyException {
+			String edbid, String subscriptionTrackingToken)
+			throws ParseException, NoSuchAlgorithmException, InvalidKeyException {
 
 		String subscriptionPayload = null;
 
@@ -142,12 +166,18 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 			subscriptionPayload = payload + "." + payloadSignature;
 
-			SubscriptionAccess subscriptionAccess = new SubscriptionAccess();
-			subscriptionAccess.setSubscriptionTrackingToken(UUID.randomUUID().toString());
+			SubscriptionAccess subscriptionAccess = adminDao.uniqueResult(
+					"from SubscriptionAccess where subscriptionTrackingToken = ?", SubscriptionAccess.class, "");
+
+			if (null == subscriptionAccess) {
+				subscriptionAccess = new SubscriptionAccess();
+				subscriptionAccess.setSubscriptionTrackingToken(UUID.randomUUID().toString());
+				subscriptionAccess
+						.setSubscribeMarket(environment.getRequiredProperty("subscriptionAccess.subscribeMarket"));
+			}
 			subscriptionAccess.setFbRedirectURI(redirectUri);
 			subscriptionAccess.setFbLinkingToken(accountLinkingToken);
-			subscriptionAccess
-					.setSubscribeMarket(environment.getRequiredProperty("subscriptionAccess.subscribeMarket"));
+
 			subscriptionAccess.setSubscriberId(edbid);
 			subscriptionAccess.setSubscriptionStatus(subscriptionLevelHousehold.toString());
 			subscriptionAccess.setAccountId(accountId.toString());
