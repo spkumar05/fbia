@@ -41,7 +41,7 @@
 		function successGetSubscriptionPayload(response) {
 			console.log("successGetSubscriptionPayload");
 			if (response.status.code == 200) {
-				var redirectUrl = redirectUri + "&account_linking_token="
+				var redirectUrl = redirectUri + "?account_linking_token="
 						+ accountLinkingToken + "&subscription_payload="
 						+ encodeURIComponent(response.data);
 				$(location).attr('href', redirectUrl);
