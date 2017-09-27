@@ -17,6 +17,7 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
 
@@ -49,7 +50,7 @@ public class SubscriptionTest {
 
 			Name masterId = soapFactory.createName("MasterId", "tem", "http://tempuri.org/");
 			SOAPElement masterIdElement = getSubscriptionsByMasterIdElement.addChildElement(masterId);
-			masterIdElement.addTextNode("112861");
+			masterIdElement.addTextNode("405204");
 
 			Name authenticationToken = soapFactory.createName("AuthenticationToken", "tem", "http://tempuri.org/");
 			SOAPElement authenticationTokenElement = getSubscriptionsByMasterIdElement
@@ -85,15 +86,30 @@ public class SubscriptionTest {
 			boolean success = getSubscriptionsByMasterIdResult.getBoolean("Success");
 			System.out.println(success);
 			if (success) {
-
-
+				Object subscriptionCheck = getSubscriptionsByMasterIdResult.getJSONObject("Subscriptions")
+						.get("Subscription");
+				JSONObject subscription = null;
+				if (subscriptionCheck instanceof JSONArray) {
+					JSONArray subscriptionArray = (JSONArray) subscriptionCheck;
+					System.out.println(subscriptionArray);
+					for (int i = 0; i < subscriptionArray.length(); i++) {
+						subscription = subscriptionArray.getJSONObject(i);
+						if (subscription.getLong("SubscriptionLevel") == 2) {
+							break;
+						}
+					}
+				} else if (subscriptionCheck instanceof JSONObject) {
+					subscription = (JSONObject) subscriptionCheck;
+				}
+				System.out.println(subscription);
 			}
 
 			/*
 			 * ObjectMapper objectMapper = new ObjectMapper();
 			 * 
-			 * GetSubscriptionsByMasterIdResult getSubscriptionsByMasterIdResult =
-			 * objectMapper .readValue(getSubscriptionsByMasterIdResponse.toString(),
+			 * GetSubscriptionsByMasterIdResult getSubscriptionsByMasterIdResult
+			 * = objectMapper
+			 * .readValue(getSubscriptionsByMasterIdResponse.toString(),
 			 * GetSubscriptionsByMasterIdResult.class);
 			 * 
 			 * System.out.println(getSubscriptionsByMasterIdResult);

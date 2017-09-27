@@ -124,15 +124,24 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 		boolean success = getSubscriptionsByMasterIdResult.getBoolean("Success");
 		if (success) {
+			Object subscriptionCheck = getSubscriptionsByMasterIdResult.getJSONObject("Subscriptions")
+					.get("Subscription");
+			JSONObject subscription = null;
+			if (subscriptionCheck instanceof JSONArray) {
+				JSONArray subscriptionArray = (JSONArray) subscriptionCheck;
+				for (int i = 0; i < subscriptionArray.length(); i++) {
+					subscription = subscriptionArray.getJSONObject(i);
+					if (subscription.getLong("SubscriptionLevel") == 1) {
+						break;
+					}
+				}
+			} else if (subscriptionCheck instanceof JSONObject) {
+				subscription = (JSONObject) subscriptionCheck;
+			}
 
-			Long accountId = getSubscriptionsByMasterIdResult.getJSONObject("Subscriptions")
-					.getJSONObject("Subscription").getLong("AccountId");
-
-			Long subscriptionLevelHousehold = getSubscriptionsByMasterIdResult.getJSONObject("Subscriptions")
-					.getJSONObject("Subscription").getLong("SubscriptionLevelHousehold");
-
-			String expirationDate = getSubscriptionsByMasterIdResult.getJSONObject("Subscriptions")
-					.getJSONObject("Subscription").getString("ExpirationDate");
+			Long accountId = subscription.getLong("AccountId");
+			Long subscriptionLevelHousehold = subscription.getLong("SubscriptionLevelHousehold");
+			String expirationDate = subscription.getString("ExpirationDate");
 
 			SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss a");
 			Date date = df.parse(expirationDate);
