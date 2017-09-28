@@ -10,8 +10,10 @@
 	var subscribeRedirectUrl = '${subscribeRedirectUrl}';
 	var appPath = (location.origin.indexOf("localhost") >= 0) ? "/fbia/login"
 			: "/login";
-	var returnUrl = location.origin + appPath + "?account_linking_token="
-			+ accountLinkingToken + "&redirect_uri=" + redirectUri;
+	//var returnUrl = location.origin + appPath + "?account_linking_token="
+	//		+ accountLinkingToken + "&redirect_uri=" + redirectUri;
+	//debugger;
+	var returnUrl = location.origin + appPath + "?subscription_tracking_token="+subscriptionTrackingToken;
 	var redirectUrl = subscribeRedirectUrl + "&return="
 			+ encodeURIComponent(returnUrl);
 	// Remove encodeURIComponent() here if not required. 

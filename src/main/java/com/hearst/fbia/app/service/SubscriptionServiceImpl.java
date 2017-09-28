@@ -58,6 +58,13 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	public AdminDao getAdminDao() {
 		return adminDao;
 	}
+	
+	@Override
+	public SubscriptionAccess getRequestInfo(String subscriptionTrackingToken) {
+		return adminDao.uniqueResult(
+				"from SubscriptionAccess where subscriptionTrackingToken = ?",
+				SubscriptionAccess.class, subscriptionTrackingToken);
+	}
 
 	@Transactional
 	@Override

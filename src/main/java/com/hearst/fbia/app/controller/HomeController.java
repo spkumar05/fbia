@@ -35,16 +35,27 @@ public class HomeController {
 	}
 
 	@RequestMapping(value = "login", method = RequestMethod.GET)
-	public String login(@RequestParam String redirect_uri, @RequestParam String account_linking_token, Model model) {
+	public String login(@RequestParam(required = false) String redirect_uri,
+			@RequestParam(required = false) String account_linking_token,
+			@RequestParam(required = false) String subscription_tracking_token, Model model) {
 		logger.info("redirect_uri {}", redirect_uri);
 		logger.info("account_linking_token {}", account_linking_token);
-		String subscriptionTrackingToken = subscriptionService.saveRequestInfo(account_linking_token, redirect_uri,
-				SubscriptionConstants.LOGIN.toString());
-		model.addAttribute("subscriptionTrackingToken", subscriptionTrackingToken);
+		if (null != redirect_uri && null != account_linking_token) {
+			subscription_tracking_token = subscriptionService.saveRequestInfo(account_linking_token, redirect_uri,
+					SubscriptionConstants.LOGIN.toString());
+		} else if (null != subscription_tracking_token) {
+			SubscriptionAccess subscriptionAccess = subscriptionService.getRequestInfo(subscription_tracking_token);
+			if (null != subscriptionAccess) {
+				redirect_uri = subscriptionAccess.getFbRedirectURI();
+				account_linking_token = subscriptionAccess.getFbLinkingToken();
+			}
+		}
+		model.addAttribute("subscriptionTrackingToken", subscription_tracking_token);
 		model.addAttribute("redirect_uri", redirect_uri);
 		model.addAttribute("account_linking_token", account_linking_token);
 		return "login";
 	}
+
 
 	@RequestMapping(value = "subscribe", method = RequestMethod.GET)
 	public String subscribe(@RequestParam String redirect_uri, @RequestParam String account_linking_token,
