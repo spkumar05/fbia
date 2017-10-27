@@ -105,11 +105,12 @@ public class SFChronicle extends Market {
 			Long subscriptionStatus = subscription.getBoolean("Active") ? 1L : 0L;
 			String expirationDate = subscription.getString("ExpirationDateTime");
 			
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+			Date date = df.parse(expirationDate);
+
 			SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-			
-			Date date = df1.parse(expirationDate);
-			
 			df1.setTimeZone(TimeZone.getTimeZone("UTC"));
+
 			String expiryTime = df1.format(date);
 			
 			String facebookAppSecret = environment.getRequiredProperty("sfchronicle.facebook.app.secret");

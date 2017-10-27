@@ -137,9 +137,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 		} else if (domain.contains("sfchronicle")) {
 			market = environment.getRequiredProperty("sfchronicle.subscriptionAccess.subscribeMarket");
 		} else {
-			market = "Houston";
+			market = "localhost";
 		}
-		return domain + market;
+		return market;
 	}
 
 	private String processSoapResponse(String soapResponse, String redirectUri, String accountLinkingToken,
