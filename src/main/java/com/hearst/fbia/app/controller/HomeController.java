@@ -67,7 +67,19 @@ public class HomeController {
 		model.addAttribute("subscriptionTrackingToken", subscriptionTrackingToken);
 		model.addAttribute("redirect_uri", redirect_uri);
 		model.addAttribute("account_linking_token", account_linking_token);
-		model.addAttribute("subscribeRedirectUrl", environment.getRequiredProperty("subscribe.redirect.url"));
+
+		String currentMarket = subscriptionService.getCurrentMarket();
+
+		if (currentMarket
+				.equalsIgnoreCase(environment.getRequiredProperty("houston.subscriptionAccess.subscribeMarket"))) {
+			model.addAttribute("subscribeRedirectUrl",
+					environment.getRequiredProperty("houston.subscribe.redirect.url"));
+		} else if (currentMarket
+				.equalsIgnoreCase(environment.getRequiredProperty("sfchronicle.subscriptionAccess.subscribeMarket"))) {
+			model.addAttribute("subscribeRedirectUrl",
+					environment.getRequiredProperty("sfchronicle.subscribe.redirect.url"));
+		}
+
 		return "subscribe";
 	}
 
@@ -81,6 +93,12 @@ public class HomeController {
 	@RequestMapping(value = "test", method = RequestMethod.GET)
 	public List<SubscriptionAccess> test() {
 		return subscriptionService.getAdminDao().getAllEntities(SubscriptionAccess.class);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "currentMarket", method = RequestMethod.GET)
+	public String currentMarket() {
+		return subscriptionService.getCurrentMarket();
 	}
 
 }

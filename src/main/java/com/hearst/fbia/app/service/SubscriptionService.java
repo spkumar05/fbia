@@ -11,7 +11,9 @@ public interface SubscriptionService {
 	AdminDao getAdminDao();
 
 	String saveRequestInfo(String account_linking_token, String redirect_uri, String accessType);
-	
+
 	SubscriptionAccess getRequestInfo(String subscriptionTrackingToken);
+
+	String getCurrentMarket();
 
 }

@@ -7,6 +7,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -49,6 +50,11 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		super.addViewControllers(registry);
 		registry.addViewController("terms_of_use").setViewName("termsofuse");
 		registry.addViewController("privacy_policy").setViewName("privacypolicy");
+	}
+
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
 	}
 
 }

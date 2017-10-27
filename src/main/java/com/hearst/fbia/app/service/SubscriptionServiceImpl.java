@@ -37,8 +37,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.hearst.fbia.app.domain.SubscriptionAccess;
+import com.hearst.fbia.app.market.Market;
+import com.hearst.fbia.app.market.MarketRegistry;
 import com.hearst.fbia.app.model.Meta;
 import com.hearst.fbia.app.model.Response;
 import com.hearst.fbia.frm.service.dao.AdminDao;
@@ -58,11 +61,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	public AdminDao getAdminDao() {
 		return adminDao;
 	}
-	
+
 	@Override
 	public SubscriptionAccess getRequestInfo(String subscriptionTrackingToken) {
-		return adminDao.uniqueResult(
-				"from SubscriptionAccess where subscriptionTrackingToken = ?",
+		return adminDao.uniqueResult("from SubscriptionAccess where subscriptionTrackingToken = ?",
 				SubscriptionAccess.class, subscriptionTrackingToken);
 	}
 
@@ -77,8 +79,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 			subscriptionAccess = new SubscriptionAccess();
 			subscriptionAccess.setSubscriptionTrackingToken(UUID.randomUUID().toString());
 			subscriptionAccess.setAccessType(accessType);
-			subscriptionAccess
-					.setSubscribeMarket(environment.getRequiredProperty("subscriptionAccess.subscribeMarket"));
+			subscriptionAccess.setSubscribeMarket(getCurrentMarket());
 		}
 
 		subscriptionAccess.setFbRedirectURI(redirect_uri);
@@ -92,6 +93,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	@Transactional
 	@Override
 	public Response getSubscriptionPayload(String subscription) {
+		JSONObject subscriptionJson = new JSONObject(subscription);
+		Market market = MarketRegistry.getRegisteredMarket(getCurrentMarket());
+		return market.getSubscriptionPayload(subscriptionJson);
+	}
+
+	@Transactional
+	// @Override
+	public Response getSubscriptionPayloadOld(String subscription) {
 		JSONObject jsonObject = new JSONObject(subscription);
 		Meta meta = null;
 		String subscriptionPayload = null;
@@ -100,7 +109,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 			SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 			SOAPConnection soapConnection = soapConnectionFactory.createConnection();
 			SOAPMessage soapResponse = soapConnection.call(soapRequest,
-					environment.getRequiredProperty("soap.request.url"));
+					environment.getRequiredProperty("houston.soap.request.url"));
 
 			String soapResponseString = getStringFromSoapMessage(soapResponse);
 			logger.info("Soap Response : {}", soapResponseString);
@@ -116,6 +125,21 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 		}
 		Response response = new Response(subscriptionPayload, meta);
 		return response;
+	}
+
+	@Override
+	public String getCurrentMarket() {
+		String market = null;
+		String domain = ServletUriComponentsBuilder.fromCurrentRequestUri().build().getHost();
+
+		if (domain.contains("houston")) {
+			market = environment.getRequiredProperty("houston.subscriptionAccess.subscribeMarket");
+		} else if (domain.contains("sfchronicle")) {
+			market = environment.getRequiredProperty("sfchronicle.subscriptionAccess.subscribeMarket");
+		} else {
+			market = "Houston";
+		}
+		return domain + market;
 	}
 
 	private String processSoapResponse(String soapResponse, String redirectUri, String accountLinkingToken,
@@ -152,7 +176,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 			SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss a");
 			Date date = df.parse(expirationDate);
-
+			
 			SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 			df1.setTimeZone(TimeZone.getTimeZone("UTC"));
 
@@ -175,7 +199,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 			Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
 			SecretKeySpec secret_key = new SecretKeySpec(
-					environment.getRequiredProperty("facebook.app.secret").getBytes(), "HmacSHA256");
+					environment.getRequiredProperty("houston.facebook.app.secret").getBytes(), "HmacSHA256");
 			sha256_HMAC.init(secret_key);
 
 			String payloadSignature = Base64.encodeBase64String(sha256_HMAC.doFinal(payload.getBytes()));
@@ -190,8 +214,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 			if (null == subscriptionAccess) {
 				subscriptionAccess = new SubscriptionAccess();
 				subscriptionAccess.setSubscriptionTrackingToken(UUID.randomUUID().toString());
-				subscriptionAccess
-						.setSubscribeMarket(environment.getRequiredProperty("subscriptionAccess.subscribeMarket"));
+				subscriptionAccess.setSubscribeMarket(
+						environment.getRequiredProperty("houston.subscriptionAccess.subscribeMarket"));
 			}
 			subscriptionAccess.setFbRedirectURI(redirectUri);
 			subscriptionAccess.setFbLinkingToken(accountLinkingToken);
@@ -240,11 +264,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 		Name authenticationTokenName = soapFactory.createName("AuthenticationToken", "tem", "http://tempuri.org/");
 		SOAPElement authenticationTokenElement = getSubscriptionsByMasterIdElement
 				.addChildElement(authenticationTokenName);
-		authenticationTokenElement.addTextNode(environment.getRequiredProperty("soap.request.authenticationToken"));
+		authenticationTokenElement
+				.addTextNode(environment.getRequiredProperty("houston.soap.request.authenticationToken"));
 
 		Name sourceSystemName = soapFactory.createName("SourceSystem", "tem", "http://tempuri.org/");
 		SOAPElement sourceSystemElement = getSubscriptionsByMasterIdElement.addChildElement(sourceSystemName);
-		sourceSystemElement.addTextNode(environment.getRequiredProperty("soap.request.sourceSystem"));
+		sourceSystemElement.addTextNode(environment.getRequiredProperty("houston.soap.request.sourceSystem"));
 
 		String soapRequestString = getStringFromSoapMessage(soapMessage);
 		logger.info("Soap Request : {}", soapRequestString);

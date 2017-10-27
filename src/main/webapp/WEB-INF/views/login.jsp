@@ -24,8 +24,10 @@
 			console.log("Active session - " + treg.hasActiveSession());
 			if (treg.hasActiveSession()) {
 				var edbid = JSON.parse(treg.readCookie('hrstptok')).id;
+				var externalId = treg.identity.id;
 				var subscriptionObj = {
 					"edbid" : edbid,
+					"externalId" : externalId,
 					"redirectUri" : redirectUri,
 					"accountLinkingToken" : accountLinkingToken,
 					"subscriptionTrackingToken" : subscriptionTrackingToken
