@@ -38,6 +38,7 @@ public class HomeController {
 	public String login(@RequestParam(required = false) String redirect_uri,
 			@RequestParam(required = false) String account_linking_token,
 			@RequestParam(required = false) String subscription_tracking_token, Model model) {
+		Long startTime = System.currentTimeMillis();
 		logger.info("redirect_uri {}", redirect_uri);
 		logger.info("account_linking_token {}", account_linking_token);
 		if (null != redirect_uri && null != account_linking_token) {
@@ -53,13 +54,14 @@ public class HomeController {
 		model.addAttribute("subscriptionTrackingToken", subscription_tracking_token);
 		model.addAttribute("redirect_uri", redirect_uri);
 		model.addAttribute("account_linking_token", account_linking_token);
+		logger.info("Time Taken - {}", subscriptionService.convertMsToTime(System.currentTimeMillis() - startTime));
 		return "login";
 	}
-
 
 	@RequestMapping(value = "subscribe", method = RequestMethod.GET)
 	public String subscribe(@RequestParam String redirect_uri, @RequestParam String account_linking_token,
 			Model model) {
+		Long startTime = System.currentTimeMillis();
 		logger.info("redirect_uri {}", redirect_uri);
 		logger.info("account_linking_token {}", account_linking_token);
 		String subscriptionTrackingToken = subscriptionService.saveRequestInfo(account_linking_token, redirect_uri,
@@ -67,26 +69,18 @@ public class HomeController {
 		model.addAttribute("subscriptionTrackingToken", subscriptionTrackingToken);
 		model.addAttribute("redirect_uri", redirect_uri);
 		model.addAttribute("account_linking_token", account_linking_token);
-
-		String currentMarket = subscriptionService.getCurrentMarket();
-
-		if (currentMarket
-				.equalsIgnoreCase(environment.getRequiredProperty("houston.subscriptionAccess.subscribeMarket"))) {
-			model.addAttribute("subscribeRedirectUrl",
-					environment.getRequiredProperty("houston.subscribe.redirect.url"));
-		} else if (currentMarket
-				.equalsIgnoreCase(environment.getRequiredProperty("sfchronicle.subscriptionAccess.subscribeMarket"))) {
-			model.addAttribute("subscribeRedirectUrl",
-					environment.getRequiredProperty("sfchronicle.subscribe.redirect.url"));
-		}
-
+		model.addAttribute("subscribeRedirectUrl", subscriptionService.getRedirectUrl());
+		logger.info("Time Taken - {}", subscriptionService.convertMsToTime(System.currentTimeMillis() - startTime));
 		return "subscribe";
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "getSubscriptionPayload", method = RequestMethod.POST)
 	public Response getSubscriptionPayload(@RequestParam String subscription) {
-		return subscriptionService.getSubscriptionPayload(subscription);
+		Long startTime = System.currentTimeMillis();
+		Response response = subscriptionService.getSubscriptionPayload(subscription);
+		logger.info("Time Taken - {}", subscriptionService.convertMsToTime(System.currentTimeMillis() - startTime));
+		return response;
 	}
 
 	@ResponseBody

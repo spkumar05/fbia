@@ -16,4 +16,8 @@ public interface SubscriptionService {
 
 	String getCurrentMarket();
 
+	String getRedirectUrl();
+
+	String convertMsToTime(long miliSeconds);
+
 }
