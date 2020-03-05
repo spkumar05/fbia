@@ -36,7 +36,7 @@
 
 		<!-- JSON -->
 		<json-version>20170516</json-version>
-		<com.fasterxml.jackson.core-version>2.9.1</com.fasterxml.jackson.core-version>
+		<com.fasterxml.jackson.core-version>2.10.3</com.fasterxml.jackson.core-version>
 
 		<!-- Commons jars -->
 		<commons-lang3-version>3.6</commons-lang3-version>
