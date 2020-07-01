@@ -29,7 +29,7 @@
 		<!-- Logging -->
 		<org.aspectj-version>1.8.10</org.aspectj-version>
 		<org.slf4j-version>1.7.25</org.slf4j-version>
-		<org.apache.logging.log4j-version>2.9.0</org.apache.logging.log4j-version>
+		<org.apache.logging.log4j-version>2.13.2</org.apache.logging.log4j-version>
 
 		<!-- Test -->
 		<junit-version>4.12</junit-version>
