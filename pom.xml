@@ -32,7 +32,7 @@
 		<org.apache.logging.log4j-version>2.9.0</org.apache.logging.log4j-version>
 
 		<!-- Test -->
-		<junit-version>4.12</junit-version>
+		<junit-version>4.13.1</junit-version>
 
 		<!-- JSON -->
 		<json-version>20170516</json-version>
