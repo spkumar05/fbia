@@ -51,7 +51,7 @@
 		<org.hibernate-version>5.1.10.Final</org.hibernate-version>
 
 		<!-- MySQL -->
-		<mysql-version>5.1.44</mysql-version>
+		<mysql-version>8.0.16</mysql-version>
 
 		<!-- Swagger -->
 		<io.springfox-version>2.6.1</io.springfox-version>
